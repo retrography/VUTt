@@ -1,5 +1,38 @@
 var parseTT = function() {
-
+	
+	var range = function(begin, end) {
+		let numbers = [];
+		for (let i = begin; i <= end; i++) {
+		    numbers.push(i);
+		}
+		return(numbers);
+	}
+	
+	var parseRange = function(rangeString) {
+		let [begin, end] = rangeString.split("-");
+		begin = parseInt(begin);
+		end = parseInt(end);
+		if (isNaN(end)) {
+			return([begin]);
+		} else {
+			return(range(begin, end));
+		}
+	}
+	
+	var parseRanges = function(rangeString) {
+		let ranges = rangeString.split(",");
+		let thisYear = [];
+		let nextYear = [];
+		for (let i = 0; i < ranges.length; i++) {
+			let numbers = parseRange(ranges[i]);
+			if (i == 0 || numbers[0] > thisYear[0])
+				thisYear = thisYear.concat(numbers);
+			else
+				nextYear = nextYear.concat(numbers);
+		}
+		return([thisYear, nextYear]);
+	}
+	
 	var icsFormatter = function() {
 		'use strict';
 
@@ -65,28 +98,26 @@ var parseTT = function() {
 					description == "" ? "" : CALSEP + "Description: " + description,
 					comment == "" ? "" : CALSEP + "Comment: " + comment
 				].join("");
+				
+				weeks = weeks.replace(/\s/g, "");
+				weekRanges = parseRanges(weeks);
+				
+				for (var w in weekRanges) {
+					if (w.length > 0) {
+						var calendarEvent = [
+							'BEGIN:VEVENT',
+							'DTEND;TZID=Europe/Amsterdam:' + end,
+							'LOCATION:' + locations,
+							'DESCRIPTION:' + description,
+							'SUMMARY:' + title,
+							'DTSTART;TZID=Europe/Amsterdam:' + begin,
+							(weeks == 1 ? "" : 'RRULE:FREQ=WEEKLY;BYWEEKNO=' + w.toString() + SEP) + 'END:VEVENT'
+						].join(SEP);
 
-				let [w1, w2] = weeks.split("-");
-				if (isNaN(w2)) {
-					weeks = 1;
-				} else {
-					w1 = parseInt(w1);
-					w2 = parseInt(w2);
-					w2 = w2 >= w1 ? w2 : w2 + 52;
-					weeks = w2 - w1 + 1;
+						calendarEvents.push(calendarEvent);
+					}
 				}
 
-				var calendarEvent = [
-					'BEGIN:VEVENT',
-					'DTEND;TZID=Europe/Amsterdam:' + end,
-					'LOCATION:' + locations,
-					'DESCRIPTION:' + description,
-					'SUMMARY:' + title,
-					'DTSTART;TZID=Europe/Amsterdam:' + begin,
-					(weeks == 1 ? "" : 'RRULE:FREQ=WEEKLY;INTERVAL=1;COUNT=' + weeks + SEP) + 'END:VEVENT'
-				].join(SEP);
-
-				calendarEvents.push(calendarEvent);
 				return calendarEvent;
 			},
 			'download': function(filename) {

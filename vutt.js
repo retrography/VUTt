@@ -100,10 +100,10 @@ var parseTT = function() {
 				].join("");
 				
 				weeks = weeks.replace(/\s/g, "");
-				weekRanges = parseRanges(weeks);
+				var weekRanges = parseRanges(weeks);
 				
-				for (var w in weekRanges) {
-					if (w.length > 0) {
+				for (let i = 0 ; i < weekRanges.length; i++) {
+					if (weekRanges[i].length > 0) {
 						var calendarEvent = [
 							'BEGIN:VEVENT',
 							'DTEND;TZID=Europe/Amsterdam:' + end,
@@ -111,7 +111,7 @@ var parseTT = function() {
 							'DESCRIPTION:' + description,
 							'SUMMARY:' + title,
 							'DTSTART;TZID=Europe/Amsterdam:' + begin,
-							(weeks == 1 ? "" : 'RRULE:FREQ=WEEKLY;BYWEEKNO=' + w.toString() + SEP) + 'END:VEVENT'
+							(weekRanges[i].length == 1 ? "" : 'RRULE:FREQ=WEEKLY;BYWEEKNO=' + weekRanges[i].toString() + SEP) + 'END:VEVENT'
 						].join(SEP);
 
 						calendarEvents.push(calendarEvent);

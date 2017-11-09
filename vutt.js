@@ -36,12 +36,14 @@ var parseTT = function() {
 	var icsFormatter = function() {
 		'use strict';
 
-		var SEP = (navigator.appVersion.indexOf('Win') !== -1) ? '\r\n' : '\n';
-		var CALSEP = (navigator.appVersion.indexOf('Win') !== -1) ? '\\r\\n' : '\\n';
+		var SEP = '\r\n';
+		var CALSEP = '\\n';
 
 		var calendarEvents = [];
 		var calendarStart = [
 			'BEGIN:VCALENDAR',
+			'PRODID:-//Mahmood Shafeie Zargar//VU🐓//EN',
+			'VERSION:2.0',
 			'BEGIN:VTIMEZONE',
 			'TZID:Europe/Amsterdam',
 			'BEGIN:DAYLIGHT',

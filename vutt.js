@@ -87,8 +87,8 @@ var parseTT = function() {
 				let [day, month, year] = date.split("/");
 				day = ('00' + day).substring(day.length);
 				month = ('00' + month).substring(month.length);
-				year = ('00' + year).substring(year.length);
-				date = "20" + year + month + day;
+				year = '20' + ('00' + year).substring(year.length);
+				date = year + month + day;
 
 				let [bhour, bmin] = begin.split(":");
 				bhour = ('00' + bhour).substring(bhour.length);
@@ -99,6 +99,9 @@ var parseTT = function() {
 				ehour = ('00' + ehour).substring(ehour.length);
 				emin = ('00' + emin).substring(emin.length);
 				end = date + "T" + ehour + emin + "00";
+				
+				let nextyear = (Number.parseInt(year) + 1).toString();
+				let until = nextyear + "01" + "01" + "T" + "00" + "00" + "00";
 
 				description = [
 					code == "" ? "" : "Code: " + code,
@@ -123,7 +126,7 @@ var parseTT = function() {
 							'DESCRIPTION:' + description,
 							'SUMMARY:' + title,
 							'DTSTART;TZID=Europe/Amsterdam:' + begin,
-							(weekRanges[i].length == 1 ? "" : 'RRULE:FREQ=YEARLY;BYWEEKNO=' + weekRanges[i].toString() + SEP) + 'END:VEVENT'
+							(weekRanges[i].length == 1 ? "" : 'RRULE:FREQ=YEARLY;BYWEEKNO=' + weekRanges[i].toString() + ';UNTIL=' + until + SEP) + 'END:VEVENT'
 						].join(SEP);
 
 						calendarEvents.push(calendarEvent);

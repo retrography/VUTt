@@ -1,5 +1,11 @@
 var parseTT = function() {
 	
+	var plusAWeek = function(date, count) {
+		let newDate = date.valueOf() + count * 604800000;
+		newDate = new Date(newDate);
+		return(newDate);
+	}
+	
 	var range = function(begin, end) {
 		let numbers = [];
 		for (let i = begin; i <= end; i++) {
@@ -101,6 +107,9 @@ var parseTT = function() {
 					comment == "" ? "" : CALSEP + "Comment: " + comment
 				].join("");
 				
+				let stamp = new Date();
+				stamp = stamp.toISOString().replace(/([-:]|\.\d{3})/g, "");
+				
 				weeks = weeks.replace(/\s/g, "");
 				var weekRanges = parseRanges(weeks);
 				
@@ -108,12 +117,13 @@ var parseTT = function() {
 					if (weekRanges[i].length > 0) {
 						var calendarEvent = [
 							'BEGIN:VEVENT',
+							'DTSTAMP:' + stamp,
 							'DTEND;TZID=Europe/Amsterdam:' + end,
 							'LOCATION:' + locations,
 							'DESCRIPTION:' + description,
 							'SUMMARY:' + title,
 							'DTSTART;TZID=Europe/Amsterdam:' + begin,
-							(weekRanges[i].length == 1 ? "" : 'RRULE:FREQ=WEEKLY;BYWEEKNO=' + weekRanges[i].toString() + SEP) + 'END:VEVENT'
+							(weekRanges[i].length == 1 ? "" : 'RRULE:FREQ=YEARLY;BYWEEKNO=' + weekRanges[i].toString() + SEP) + 'END:VEVENT'
 						].join(SEP);
 
 						calendarEvents.push(calendarEvent);
@@ -159,9 +169,9 @@ var parseTT = function() {
 	);
 	if (cal.events().length == 0) {
 		if (window.location.hostname != "rooster.vu.nl") {
-			alert("VUTt is unable to find the timetable information on the current page, and you don't seem to be on the Rooster website! Note that VUTt only works with VU's Rooster web app.");
+			alert("VUTt is unable to find the timetable information on the current page, and you don't seem to be on the Rooster website! Note that VU🐓 only works with VU's Rooster web app.");
 		} else {
-			alert("Although you seem to be on the Rooster website, VUTt can not find any timetable information on the current page! Either there is no timetable on this page, or you have found a bug. Please try once more and if you can't make it work, file a bug report.");
+			alert("Although you seem to be on the Rooster website, VU🐓 can not find any timetable information on the current page! Either there is no timetable on this page, or you have found a bug. Please try once more and if you can't make it work, file a bug report.");
 		}
 	} else {
 		var calname = document.querySelector("span.header-2-0-1");
